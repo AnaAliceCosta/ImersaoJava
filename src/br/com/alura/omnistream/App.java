@@ -1,6 +1,9 @@
 package br.com.alura.omnistream;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -19,17 +22,21 @@ public class App {
         
         HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
         String body = response.body();
-        System.out.println(body);
 
 
         List<Map<String,String>> listaDeFilmes = new JsonParser().parse(body);
 
-        listaDeFilmes.forEach(filme -> {
+        for (Map<String,String> filme: listaDeFilmes){
+            var urlImagem = filme.get("image");
+            var inputStream = new URL(urlImagem).openStream();
+            GeradorDeFigulinhas.cria(inputStream, "/home/ana/projetos/ImersaoJava/src/br/com/alura/omnistream/saida/"+  filme.get("title") + ".png");
             System.out.println(filme.get("title"));
             System.out.println(filme.get("image"));
             System.out.println(filme.get("imDbRating"));
             System.out.println();
-        });
+        }
+
+
         
 
     }
